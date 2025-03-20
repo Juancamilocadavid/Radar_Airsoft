@@ -5,59 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radar Airsoft</title>
 
-    <!-- Leaflet CSS -->
+    <!-- Estilos -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js"></script>
-
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
     <style>
-        #map { height: 500px; width: 100%; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #map {
+            height: 500px;
+            width: 80%;
+            margin: auto;
+            border: 2px solid black;
+        }
     </style>
 </head>
 <body>
     <h2>Radar Airsoft</h2>
     <div id="map"></div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+
+    <!-- Librería Leaflet -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
     <script>
-        // Configuración de Firebase
+        // 🔥 Configuración de Firebase (reemplázala con la tuya)
         const firebaseConfig = {
             apiKey: "AIzaSyBTLTD3y-mgxv89sAwu08E2TS3LD_l4-as",
             authDomain: "radar-airsoft.firebaseapp.com",
+            databaseURL: "https://console.firebase.google.com/project/radar-airsoft/database/radar-airsoft-default-rtdb/data/~2F?hl=es-419&fb_gclid=Cj0KCQjw1um-BhDtARIsABjU5x5gYW_4YNWF-FakfOOs268KbEtJL1bsElwJ5YoHMJKfTzm-OVElYPoaAg1KEALw_wcB",
             projectId: "radar-airsoft",
-            storageBucket: "radar-airsoft.appspot.com",
+            storageBucket: "radar-airsoft.firebasestorage.app",
             messagingSenderId: "896947272238",
-            appId: "1:896947272238:web:b0c4ed95da507808287dbf"
+            appId: "896947272238:web:b0c4ed95da507808287dbf"
         };
 
         // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        const database = firebase.database();
 
-        // Inicializar el mapa con Leaflet
-        var map = L.map('map').setView([0, 0], 2);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
+        function initMap() {
+            console.log("Mapa cargado correctamente");
 
-        // Cargar jugadores desde Firestore
-        db.collection("jugadores").get().then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                if (data.lat && data.lng) {
-                    L.marker([data.lat, data.lng])
-                        .addTo(map)
-                        .bindPopup(data.nombre || "Jugador");
-                }
+            // Inicializar el mapa centrado en un punto específico
+            var map = L.map('map').setView([0, 0], 2);
+
+            // Agregar capa de mapa base de OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Escuchar cambios en Firebase y actualizar el mapa
+            database.ref('jugadores').on('value', (snapshot) => {
+                map.eachLayer((layer) => {
+                    if (layer instanceof L.Marker) {
+                        map.removeLayer(layer);
+                    }
+                });
+
+                snapshot.forEach((childSnapshot) => {
+                    var data = childSnapshot.val();
+                    L.marker([data.lat, data.lng]).addTo(map)
+                        .bindPopup(`<b>${data.nombre}</b><br>Lat: ${data.lat}, Lng: ${data.lng}`);
+                });
             });
-        }).catch((error) => {
-            console.error("Error al obtener jugadores:", error);
-        });
+        }
 
+        // Cargar el mapa cuando la página esté lista
+        window.onload = initMap;
     </script>
 </body>
 </html>
