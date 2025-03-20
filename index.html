@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radar Airsoft</title>
 
-    <!-- Estilos para Leaflet -->
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
     <style>
-        /* Estilos básicos para el mapa */
+        /* Estilos para el mapa */
         #map {
             height: 500px;
             width: 100%;
@@ -19,39 +19,38 @@
 <body>
 
     <h1>Radar Airsoft</h1>
-    <div id="map"></div> <!-- Contenedor del mapa -->
+    <div id="map"></div>
 
-    <!-- Firebase (importado como módulo) -->
-    <script type="module">
-        // Importar Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js"></script>
 
-        // Configuración de Firebase
+    <script>
+        // Configuración Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBTLTD3y-mgxv89sAwu08E2TS3LD_l4-as",
             authDomain: "radar-airsoft.firebaseapp.com",
             projectId: "radar-airsoft",
-            storageBucket: "radar-airsoft.firebasestorage.app",
+            storageBucket: "radar-airsoft.appspot.com",
             messagingSenderId: "896947272238",
             appId: "1:896947272238:web:b0c4ed95da507808287dbf"
         };
 
         // Inicializar Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-        console.log("Firebase inicializado correctamente");
+        console.log("✅ Firebase inicializado correctamente");
     </script>
 
-    <!-- Leaflet para mapas -->
+    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
     <script>
-        // 🌍 Inicialización del mapa con Leaflet
-        const map = L.map('map').setView([0, 0], 2); // Coordenadas iniciales y zoom
+        // Inicializar mapa
+        const map = L.map('map').setView([0, 0], 2);
 
-        // Añadir capa de OpenStreetMap
+        // Capa base de OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
