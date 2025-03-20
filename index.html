@@ -4,29 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radar Airsoft</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initMap" async defer></script>
+    <script type="module">
+        // Importa Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
-    <style>
-        /* Estilos para el mapa */
-        #map {
-            height: 500px;
-            width: 100%;
-        }
-    </style>
-</head>
-<body>
-
-    <h2>Radar Airsoft</h2>
-    <div id="map"></div>
-
-    <!-- Cargar Firebase desde la CDN -->
-    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js"></script>
-
-    <script>
-        // Configuración Firebase
+        // Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBTLTD3y-mgxv89sAwu08E2TS3LD_l4-as",
             authDomain: "radar-airsoft.firebaseapp.com",
@@ -36,25 +20,35 @@
             appId: "1:896947272238:web:b0c4ed95da507808287dbf"
         };
 
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        // Inicializa Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-        console.log("✅ Firebase inicializado correctamente");
+        // Inicializa el mapa
+        let map;
+        window.initMap = async function () {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 0, lng: 0 }, // Coordenadas iniciales
+                zoom: 2
+            });
+
+            // Carga jugadores desde Firestore
+            const querySnapshot = await getDocs(collection(db, "jugadores"));
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                if (data.lat && data.lng) {
+                    new google.maps.Marker({
+                        position: { lat: data.lat, lng: data.lng },
+                        map,
+                        title: data.nombre || "Jugador"
+                    });
+                }
+            });
+        };
     </script>
-
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-    <script>
-        // Inicializar el mapa
-        const map = L.map('map').setView([0, 0], 2);
-
-        // Agregar capa de OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-    </script>
-
+</head>
+<body>
+    <h2>Radar Airsoft</h2>
+    <div id="map" style="width: 100%; height: 500px;"></div>
 </body>
 </html>
