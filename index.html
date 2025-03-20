@@ -5,46 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radar Airsoft</title>
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
-
-    <!-- Leaflet (para el mapa) -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Estilos para Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
     <style>
-        #map { height: 500px; width: 100%; }
+        /* Estilos básicos para el mapa */
+        #map {
+            height: 500px;
+            width: 100%;
+        }
     </style>
-
-
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyBTLTD3y-mgxv89sAwu08E2TS3LD_l4-as",
-    authDomain: "radar-airsoft.firebaseapp.com",
-    projectId: "radar-airsoft",
-    storageBucket: "radar-airsoft.firebasestorage.app",
-    messagingSenderId: "896947272238",
-    appId: "1:896947272238:web:b0c4ed95da507808287dbf"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-</script>
-    
 </head>
 <body>
-    <h2>Radar Airsoft</h2>
-    <div id="map"></div>
 
-    <script>
-        // Configurar Firebase (REEMPLAZA con tu configuración)
+    <h1>Radar Airsoft</h1>
+    <div id="map"></div> <!-- Contenedor del mapa -->
+
+    <!-- Firebase (importado como módulo) -->
+    <script type="module">
+        // Importar Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+        // Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBTLTD3y-mgxv89sAwu08E2TS3LD_l4-as",
             authDomain: "radar-airsoft.firebaseapp.com",
@@ -53,23 +36,26 @@
             messagingSenderId: "896947272238",
             appId: "1:896947272238:web:b0c4ed95da507808287dbf"
         };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
 
-        // Esperar a que el DOM cargue antes de inicializar el mapa
-        document.addEventListener("DOMContentLoaded", function () {
-            const map = L.map('map').setView([6.2442, -75.5812], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-            // Escuchar cambios en la colección de jugadores
-            db.collection("jugadores").onSnapshot(snapshot => {
-                snapshot.docs.forEach(doc => {
-                    let data = doc.data();
-                    L.marker([data.lat, data.lng]).addTo(map)
-                     .bindPopup(`${data.nombre}`);
-                });
-            });
-        });
+        console.log("Firebase inicializado correctamente");
     </script>
+
+    <!-- Leaflet para mapas -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        // 🌍 Inicialización del mapa con Leaflet
+        const map = L.map('map').setView([0, 0], 2); // Coordenadas iniciales y zoom
+
+        // Añadir capa de OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+    </script>
+
 </body>
 </html>
