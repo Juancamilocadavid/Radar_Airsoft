@@ -18,10 +18,10 @@
 </head>
 <body>
 
-    <h1>Radar Airsoft</h1>
+    <h2>Radar Airsoft</h2>
     <div id="map"></div>
 
-    <!-- Firebase -->
+    <!-- Cargar Firebase desde la CDN -->
     <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js"></script>
 
@@ -47,10 +47,10 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
     <script>
-        // Inicializar mapa
+        // Inicializar el mapa
         const map = L.map('map').setView([0, 0], 2);
 
-        // Capa base de OpenStreetMap
+        // Agregar capa de OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
